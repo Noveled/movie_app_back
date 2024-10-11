@@ -1,0 +1,75 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Clean up disk space before the build
+      - name: Clean Up Disk Space Before Build
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /tmp/*
+          sudo rm -rf ~/.cache/pip
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+
+      # Install Miniconda
+      - name: Install Miniconda
+        run: |
+          if [ ! -d "$HOME/miniconda" ]; then
+            wget <https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh> -O miniconda.sh
+            bash miniconda.sh -b -p $HOME/miniconda
+          else
+            echo "Miniconda is already installed. Skipping installation."
+          fi
+          eval "$($HOME/miniconda/bin/conda shell.bash hook)"
+          conda init
+          conda config --set always_yes yes --set changeps1 no
+          conda update -q conda
+
+      # Create and activate Conda environment
+      - name: Create Conda Environment
+        run: |
+          eval "$($HOME/miniconda/bin/conda shell.bash hook)"
+          conda create --name movie_app python=3.8
+          conda activate movie_app
+
+      # Cache Conda Environment
+      - name: Cache Conda Environment
+        uses: actions/cache@v3
+        with:
+          path: ~/miniconda/envs/movie_recommand
+          key: ${{ runner.os }}-conda-${{ matrix.node-version }}-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
+      # Install Python dependencies
+      - name: Install Python dependencies
+        run: |
+          eval "$($HOME/miniconda/bin/conda shell.bash hook)"
+          conda activate movie_recommand
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # # Restart BackendAPI with PM2
+      # - name: Restart Backend API with PM2
+      #   run: |
+      #     if ! [ -x "$(command -v pm2)" ]; then
+      #       npm install -g pm2
+      #     fi
+      #     pm2 restart BackendAPI
