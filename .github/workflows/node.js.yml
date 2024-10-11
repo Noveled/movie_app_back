@@ -54,7 +54,7 @@ jobs:
       - name: Cache Conda Environment
         uses: actions/cache@v3
         with:
-          path: ~/miniconda/envs/movie_recommand
+          path: ~/miniconda/envs/movie_app
           key: ${{ runner.os }}-conda-${{ matrix.node-version }}-${{ hashFiles('environment.yml') }}
           restore-keys: |
             ${{ runner.os }}-conda-
@@ -63,7 +63,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           eval "$($HOME/miniconda/bin/conda shell.bash hook)"
-          conda activate movie_recommand
+          conda activate movie_app
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # Restart BackendAPI with PM2
