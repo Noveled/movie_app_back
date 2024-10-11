@@ -18,7 +18,7 @@ const pythonExePath = isDevelopment()
   :  path.join(
     '/root/miniconda',
     'envs',
-    'movieapp',
+    'movie_app',
     'bin',
     'python3'
   );
