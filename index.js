@@ -25,7 +25,7 @@ const pythonExePath = isDevelopment()
 
 // get /
 app.get('/', (req, res) => {
-  res.send('Hello from movie_recommend node server!');
+  res.send('Hello from movie_app nodejs server!');
 
 });
 
@@ -66,7 +66,7 @@ app.get('/random/:count', (req, res) => {
 app.get('/latest/:count', (req, res) => {
   try {
     const count = parseInt(req.params.count);
-    // EC2 서버에서 현재 실행 중인 Node.js 파일의 절대 경로를 기준으로 설정.
+    // 리노드 서버에서 현재 실행 중인 Node.js 파일의 절대 경로를 기준으로 설정.
     const scriptPath = path.join(__dirname, 'resolver.py');
 
 
