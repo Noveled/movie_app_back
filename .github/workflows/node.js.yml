@@ -66,10 +66,10 @@ jobs:
           conda activate movie_recommand
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # # Restart BackendAPI with PM2
-      # - name: Restart Backend API with PM2
-      #   run: |
-      #     if ! [ -x "$(command -v pm2)" ]; then
-      #       npm install -g pm2
-      #     fi
-      #     pm2 restart BackendAPI
+      # Restart BackendAPI with PM2
+      - name: Restart Backend API with PM2
+        run: |
+          if ! [ -x "$(command -v pm2)" ]; then
+            npm install -g pm2
+          fi
+          pm2 restart MovieAppApi
